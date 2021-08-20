@@ -1,8 +1,12 @@
-# Java Gradle CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-java/ for more details
-#
-version: 2
+version: 2.1
+
+executors:
+  ubuntu:
+    working_directory: ~/repo
+    docker:
+      - image: cimg/openjdk:15.0.2
+    environment:
+      GRADLE_OPTS: "-Dorg.gradle.daemon=false"
 
 commands:
   read_cache:
@@ -25,27 +29,28 @@ commands:
 
 jobs:
   linux-build:
-    docker:
-      - image: cimg/openjdk:15.0.2
-    working_directory: ~/repo
-
+    executor: ubuntu
     steps:
       - checkout
       - read_cache
+
       - run:
           name: "Run tests"
           command: ./gradlew iTest
-      - store_test_results:
-          path: ~/repo/build/test-results/iTest/
+
       - run:
           name: "Create Package deb"
           command: ./gradlew packageDeb
+
       - write_cache
+
+      - store_test_results:
+          path: ~/repo/build/test-results/iTest/
       - store_artifacts:
-          path: /repo/build/compose/binaries/main/deb/pulseman-test_1.0.1-1_amd64.deb
+          path: ~/repo/build/compose/binaries/main/deb/
 
 workflows:
-  version: 2
+  version: 2.1
   all-os-build:
     jobs:
       - linux-build
