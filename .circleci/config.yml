@@ -58,6 +58,10 @@ jobs:
       - checkout
       - attach_workspace:
             at: artifacts
+      - run: brew tap adoptopenjdk/openjdk
+      - run: brew install adoptopenjdk15
+      - run: echo 'export PATH="/Library/Java/JavaVirtualMachines/adoptopenjdk-15.jdk/Contents/Home/bin:$PATH"' >> ~/.zshrc
+      - run: source ~/.zshrc
       - run:
           name: "Create DMG"
           command: ./gradlew packageDmg
