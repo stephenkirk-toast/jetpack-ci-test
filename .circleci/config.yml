@@ -16,7 +16,7 @@ jobs:
           command: ./gradlew iTest
       - store_test_results:
           path: ~/repo/build/reports/tests/iTest/
-      -run:
+      - run:
           name: "Create Package deb"
           command: ./gradlew packageDeb
 
