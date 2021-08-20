@@ -3,14 +3,35 @@
 # Check https://circleci.com/docs/2.0/language-java/ for more details
 #
 version: 2
+
+commands:
+  read_cache:
+    steps:
+      - restore_cache:
+          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+      - restore_cache:
+          key: v1-gradle-cache-{{ checksum "build.gradle.kts" }}
+
+  write_cache:
+    steps:
+      - save_cache:
+          paths:
+            - ~/.gradle/wrapper
+          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+      - save_cache:
+          paths:
+            - ~/.gradle/caches
+          key: v1-gradle-cache-{{ checksum "build.gradle.kts" }}
+
 jobs:
   linux-build:
     docker:
-      # specify the version you desire here
       - image: cimg/openjdk:15.0.2
     working_directory: ~/repo
+
     steps:
       - checkout
+      - read_cache
       - run:
           name: "Run tests"
           command: ./gradlew iTest
@@ -19,6 +40,7 @@ jobs:
       - run:
           name: "Create Package deb"
           command: ./gradlew packageDeb
+      - write_cache
       - store_artifacts:
           path: /repo/build/compose/binaries/main/deb/pulseman-test_1.0.1-1_amd64.deb
 
