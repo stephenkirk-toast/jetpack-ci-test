@@ -49,8 +49,30 @@ jobs:
       - store_artifacts:
           path: ~/repo/build/compose/binaries/main/deb/
 
+  publish-github-release:
+    docker:
+      - image: cibuilds/github
+    steps:
+      - attach_workspace:
+          at: ./artifacts
+      - run:
+          name: "Publish Release on GitHub"
+          command: |
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${CIRCLE_TAG} ./artifacts/
+
 workflows:
   version: 2.1
   all-os-build:
     jobs:
-      - linux-build
+      - linux-build:
+          filters:
+            tags:
+              only: /.*/ # Runs on every branch and tag
+      - publish-github-release:
+          requires:
+            - linux-build
+          filters:
+            branches:
+              ignore: /.*/ # Does not publish on any branch, tags only
+            tags:
+              only: /^\d+\.\d+\.\d+$/ # Only publishs on tags with this format: 1.2.3
