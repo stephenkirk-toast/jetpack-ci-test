@@ -59,11 +59,9 @@ jobs:
       - attach_workspace:
             at: artifacts
       - run: java -version
-      - run: brew cask uninstall java
       - run: brew tap adoptopenjdk/openjdk
       - run: brew install adoptopenjdk15
-      - run: echo 'export PATH="/Library/Java/JavaVirtualMachines/adoptopenjdk-15.jdk/Contents/Home/bin:$PATH"' >> ~/.zshrc
-      - run: source ~/.zshrc
+      - run: export JAVA_HOME=/Library/Java/JavaVirtualMachines/adoptopenjdk-15.jdk/Contents/Home
       - run: java -version
       - run:
           name: "Create DMG"
