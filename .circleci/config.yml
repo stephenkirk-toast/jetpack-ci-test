@@ -49,7 +49,7 @@ jobs:
 
       - run:
           name: "Make and store deb to workspace"
-          command: mkdir -p artifacts; cp ~/repo/build/compose/binaries/main/deb/
+          command: mkdir -p artifacts; cp ~/repo/build/compose/binaries/main/deb/* artifacts/
 
       - persist_to_workspace:
           root: artifacts
