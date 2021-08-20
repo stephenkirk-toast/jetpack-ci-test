@@ -15,7 +15,6 @@ commands:
           key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
       - restore_cache:
           key: v1-gradle-cache-{{ checksum "build.gradle.kts" }}
-
   write_cache:
     steps:
       - save_cache:
@@ -33,29 +32,45 @@ jobs:
     steps:
       - checkout
       - read_cache
-
       - run:
           name: "Run tests"
           command: ./gradlew iTest
-
       - run:
           name: "Create Package deb"
           command: ./gradlew packageDeb
-
       - write_cache
-
       - store_test_results:
           path: ~/repo/build/test-results/iTest/
-
       - run:
-          name: "Make and store deb to workspace"
+          name: "Store deb to workspace"
           command: mkdir -p artifacts; cp ~/repo/build/compose/binaries/main/deb/* artifacts/
-
       - persist_to_workspace:
           root: artifacts
           paths:
             - .
+      - store_artifacts:
+          path: artifacts/
 
+  mac-build:
+    macos:
+      xcode: 12.4.0
+    steps:
+      - attach_workspace:
+            at: artifacts
+      - checkout
+      - run:
+          name: "Create DMG"
+          command: ./gradlew packageDmg
+      - run:
+          name: "Store dmg to workspace"
+          command: cp ~/repo/build/compose/binaries/main/dmg/* artifacts/
+      - run:
+          name: "Notarize DMG"
+          command: ./gradlew notarizeDmg
+      - persist_to_workspace:
+          root: artifacts
+          paths:
+            - .
       - store_artifacts:
           path: artifacts/
 
@@ -78,11 +93,17 @@ workflows:
           filters:
             tags:
               only: /.*/ # Runs on every branch and tag
-      - publish-github-release:
+      - mac-build:
           requires:
             - linux-build
+          filters:
+            tags:
+              only: /.*/
+      - publish-github-release:
+          requires:
+            - mac-build
           filters:
             branches:
               ignore: /.*/ # Does not publish on any branch, tags only
             tags:
-              only: /^\d+\.\d+\.\d+$/ # Only publishs on tags with this format: 1.2.3
+              only: /^\d+\.\d+\.\d+$/ # Only publishes on tags with this format: 1.2.3
