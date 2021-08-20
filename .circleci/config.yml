@@ -46,15 +46,25 @@ jobs:
 
       - store_test_results:
           path: ~/repo/build/test-results/iTest/
+
+      - run:
+          name: "Make and store deb to workspace"
+          command: mkdir -p artifacts; cp ~/repo/build/compose/binaries/main/deb/
+
+      - persist_to_workspace:
+          root: artifacts
+          paths:
+            - *.deb
+
       - store_artifacts:
-          path: ~/repo/build/compose/binaries/main/deb/
+          path: artifacts/
 
   publish-github-release:
     docker:
       - image: cibuilds/github
     steps:
       - attach_workspace:
-          at: ./artifacts
+          at: artifacts
       - run:
           name: "Publish Release on GitHub"
           command: |
