@@ -5,6 +5,7 @@
 !.gitattributes
 !.dockerignore
 !.github
+!.circleci
 
 *.iml
 *.ipr
