@@ -19,6 +19,8 @@ jobs:
       - run:
           name: "Create Package deb"
           command: ./gradlew packageDeb
+      - store_artifacts:
+          path: /repo/build/compose/binaries/main/deb/pulseman-test_1.0.1-1_amd64.deb
 
 workflows:
   version: 2
