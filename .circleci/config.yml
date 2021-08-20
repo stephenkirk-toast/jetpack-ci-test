@@ -56,7 +56,6 @@ jobs:
       xcode: 12.4.0
     steps:
       - checkout
-      - read_cache
       - attach_workspace:
             at: artifacts
       - run: brew tap adoptopenjdk/openjdk
