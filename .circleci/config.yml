@@ -76,6 +76,21 @@ jobs:
       - attach_workspace:
             at: artifacts
       - run:
+          name: "Decode signing cert"
+          command: base64 -D -o cert.p12 \<<< $SIGNING_CERT
+      - run:
+          name: "Create new keychain"
+          command: security create-keychain -p keychain-pass compose.keychain
+      - run:
+          name: "Import signing cert"
+          command: security import ./cert.p12 -t agg -k compose.keychain -P $SIGNING_PASS -A
+      - run:
+          name: "Set new default keychain"
+          command: |
+            security list-keychains -s "/path/to/compose.keychain"
+            security default-keychain -s "/path/to/compose.keychain"
+            security unlock-keychain -p "keychain-pass" "/path/to/compose.keychain"
+      - run:
           name: "Check current java version"
           command: java -version
       - run:
@@ -87,12 +102,6 @@ jobs:
       - run:
           name: "Check current java version"
           command: java -version
-      - run:
-          name: "Decode signing cert"
-          command: base64 -D -o cert.p12 \<<< $SIGNING_CERT
-      - run:
-          name: "Import signing cert"
-          command: security import ./cert.p12 -P $SIGNING_PASS
       - run:
           name: "Create DMG"
           command: ./gradlew packageDmg --stacktrace
@@ -125,13 +134,7 @@ workflows:
   version: 2.1
   all-os-build:
     jobs:
-      - linux-build:
-          filters:
-            tags:
-              only: /.*/ # Runs on every branch and tag
       - mac-build:
-          requires:
-            - linux-build
           filters:
             tags:
               only: /.*/
