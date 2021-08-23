@@ -87,9 +87,9 @@ jobs:
       - run:
           name: "Set new default keychain"
           command: |
-            security list-keychains -s "/path/to/compose.keychain"
-            security default-keychain -s "/path/to/compose.keychain"
-            security unlock-keychain -p "keychain-pass" "/path/to/compose.keychain"
+            security list-keychains -s "compose.keychain"
+            security default-keychain -s "compose.keychain"
+            security unlock-keychain -p "keychain-pass" "compose.keychain"
       - run:
           name: "Check current java version"
           command: java -version
