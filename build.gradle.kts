@@ -71,8 +71,10 @@ tasks.withType<KotlinCompile> {
 
 val appleID = System.getenv("compose.desktop.mac.notarization.appleID")
 val sign = System.getenv("compose.desktop.mac.sign")
+val circlecisign = System.getenv("ORG_GRADLE_PROJECT_compose_desktop_mac_sign")
 println(appleID)
 println(sign)
+println(circlecisign)
 
 compose.desktop {
     application {
