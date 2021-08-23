@@ -69,11 +69,6 @@ tasks.withType<KotlinCompile> {
     }
 }
 
-val identity: String = findProperty("IDENTITY").toString()
-val id: String = findProperty("APPLE_ID").toString()
-val pass: String = findProperty("PASSWORD").toString()
-val provider: String = findProperty("PROVIDER").toString()
-
 compose.desktop {
     application {
         mainClass = "com.toasttab.pulseman.test.MainKt"
@@ -89,15 +84,6 @@ compose.desktop {
             macOS {
                 iconFile.set(project.file("pulse.icns"))
                 bundleID = "com.toasttab.pulseman.test"
-                signing {
-                    sign.set(true)
-                    identity.set(identity)
-                }
-                notarization {
-                    appleID.set(id)
-                    password.set(pass)
-                    ascProvider.set(provider)
-                }
             }
         }
     }
