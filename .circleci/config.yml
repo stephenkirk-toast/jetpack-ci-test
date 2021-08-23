@@ -58,11 +58,18 @@ jobs:
       - checkout
       - attach_workspace:
             at: artifacts
-      - run: java -version
-      - run: brew tap adoptopenjdk/openjdk
-      - run: brew install adoptopenjdk15
-      - run: export JAVA_HOME=/Library/Java/JavaVirtualMachines/adoptopenjdk-15.jdk/Contents/Home
-      - run: java -version
+      - run:
+          name: "Check current java version"
+          command: java -version
+      - run:
+          name: "Install java 16"
+          command: |
+            brew tap adoptopenjdk/openjdk
+            brew install adoptopenjdk15
+            export JAVA_HOME=/Library/Java/JavaVirtualMachines/adoptopenjdk-15.jdk/Contents/Home
+      - run:
+          name: "Check current java version"
+          command: java -version
       - run:
           name: "Decode signing cert"
           command: base64 -D -o cert.p12 \<<< $SIGNING_CERT

@@ -69,6 +69,11 @@ tasks.withType<KotlinCompile> {
     }
 }
 
+val appleID = System.getenv("compose.desktop.mac.notarization.appleID")
+val sign = System.getenv("compose.desktop.mac.sign")
+println(appleID)
+println(sign)
+
 compose.desktop {
     application {
         mainClass = "com.toasttab.pulseman.test.MainKt"
