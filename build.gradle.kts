@@ -85,7 +85,7 @@ compose.desktop {
                 iconFile.set(project.file("pulse.icns"))
                 bundleID = "com.toasttab.pulseman.test"
                 signing {
-                    sign.set(System.getenv("SIGN_APP")?.toString()?.toBoolean() ?: false)
+                    sign.set(false)
                     identity.set(System.getenv("IDENTITY") ?: "")
                 }
                 notarization {

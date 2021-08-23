@@ -1,7 +1,7 @@
 version: 2.1
 
 executors:
-  ubuntu:
+  linux:
     working_directory: ~/repo
     docker:
       - image: cimg/openjdk:15.0.2
@@ -44,7 +44,7 @@ commands:
 
 jobs:
   linux-build:
-    executor: ubuntu
+    executor: linux
     steps:
       - checkout
       - read_cache_linux
