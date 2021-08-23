@@ -85,15 +85,13 @@ compose.desktop {
                 iconFile.set(project.file("pulse.icns"))
                 bundleID = "com.toasttab.pulseman.test"
                 signing {
-                    sign.set(
-                        System.getenv("ORG_GRADLE_PROJECT_compose_desktop_mac_sign")?.toString()?.toBoolean() ?: false
-                    )
-                    identity.set(System.getenv("ORG_GRADLE_PROJECT_compose_desktop_mac_signing_identity") ?: "")
+                    sign.set(System.getenv("SIGN_APP")?.toString()?.toBoolean() ?: false)
+                    identity.set(System.getenv("IDENTITY") ?: "")
                 }
                 notarization {
-                    appleID.set(System.getenv("ORG_GRADLE_PROJECT_compose_desktop_mac_notarization_appleID") ?: "")
-                    password.set(System.getenv("ORG_GRADLE_PROJECT_compose_desktop_mac_notarization_password") ?: "")
-                    ascProvider.set(System.getenv("ORG_GRADLE_PROJECT_compose_desktop_mac_notarization_ascProvider") ?: "")
+                    appleID.set(System.getenv("APPLE_ID") ?: "")
+                    password.set(System.getenv("NOTARIZATION_PASSWORD") ?: "")
+                    ascProvider.set(System.getenv("PROVIDER") ?: "")
                 }
             }
         }

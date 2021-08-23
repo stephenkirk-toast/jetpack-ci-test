@@ -9,36 +9,52 @@ executors:
       GRADLE_OPTS: "-Dorg.gradle.daemon=false"
 
 commands:
-  read_cache:
+  read_cache_linux:
     steps:
       - restore_cache:
-          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+          key: v1-gradle-wrapper-linux-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
       - restore_cache:
-          key: v1-gradle-cache-{{ checksum "build.gradle.kts" }}
-  write_cache:
+          key: v1-gradle-cache-linux-{{ checksum "build.gradle.kts" }}
+  write_cache_linux:
     steps:
       - save_cache:
           paths:
             - ~/.gradle/wrapper
-          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+          key: v1-gradle-wrapper-linux-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
       - save_cache:
           paths:
             - ~/.gradle/caches
-          key: v1-gradle-cache-{{ checksum "build.gradle.kts" }}
+          key: v1-gradle-cache-linux-{{ checksum "build.gradle.kts" }}
+  read_cache_mac:
+    steps:
+      - restore_cache:
+          key: v1-gradle-wrapper-mac-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+      - restore_cache:
+          key: v1-gradle-cache-mac-{{ checksum "build.gradle.kts" }}
+  write_cache_mac:
+    steps:
+      - save_cache:
+          paths:
+            - ~/.gradle/wrapper
+          key: v1-gradle-wrapper-mac-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+      - save_cache:
+          paths:
+            - ~/.gradle/caches
+          key: v1-gradle-cache-mac-{{ checksum "build.gradle.kts" }}
 
 jobs:
   linux-build:
     executor: ubuntu
     steps:
       - checkout
-      - read_cache
+      - read_cache_linux
       - run:
           name: "Run tests"
           command: ./gradlew iTest
       - run:
           name: "Create Package deb"
           command: ./gradlew packageDeb
-      - write_cache
+      - write_cache_linux
       - store_test_results:
           path: ~/repo/build/test-results/iTest/
       - run:
@@ -56,13 +72,14 @@ jobs:
       xcode: 12.4.0
     steps:
       - checkout
+      - read_cache_mac
       - attach_workspace:
             at: artifacts
       - run:
           name: "Check current java version"
           command: java -version
       - run:
-          name: "Install java 16"
+          name: "Install java 15"
           command: |
             brew tap adoptopenjdk/openjdk
             brew install adoptopenjdk15
@@ -85,6 +102,7 @@ jobs:
       - run:
           name: "Notarize DMG"
           command: ./gradlew notarizeDmg
+      - write_cache_mac
       - persist_to_workspace:
           root: artifacts
           paths:
