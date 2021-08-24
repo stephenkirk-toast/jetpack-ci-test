@@ -88,9 +88,9 @@ jobs:
           name: "Set new default keychain"
           command: |
             security list-keychains -s "compose.keychain"
-            security default-keychain -s "compose.keychain"
+            security list-keychains
             security unlock-keychain -p "keychain-pass" "compose.keychain"
-            security set-keychain-settings -lut 7200 "compose.keychain"
+            security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k keychain-pass
       - run:
           name: "Check current java version"
           command: java -version
