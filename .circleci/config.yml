@@ -85,10 +85,11 @@ jobs:
           name: "Import signing cert"
           command: security import ./cert.p12 -t agg -k compose.keychain -P $SIGNING_PASS -A
       - run:
-          name: "Set new default keychain"
+          name: "Make chain accessible"
           command: |
             security list-keychains -s "compose.keychain"
             security list-keychains
+            security default-keychain -s "compose.keychain"
             security unlock-keychain -p "keychain-pass" "compose.keychain"
             security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k keychain-pass
       - run:
@@ -135,7 +136,13 @@ workflows:
   version: 2.1
   all-os-build:
     jobs:
+      - linux-build:
+          filters:
+            tags:
+              only: /.*/ # Runs on every branch and tag
       - mac-build:
+          requires:
+            - linux-build
           filters:
             tags:
               only: /.*/
